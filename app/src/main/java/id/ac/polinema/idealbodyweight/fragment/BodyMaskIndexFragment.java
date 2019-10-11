@@ -1,11 +1,12 @@
 package id.ac.polinema.idealbodyweight.fragment;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
-import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +16,19 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import id.ac.polinema.idealbodyweight.R;
-import id.ac.polinema.idealbodyweight.util.BrocaIndex;
+import id.ac.polinema.idealbodyweight.util.BodyMaskIndex;
 
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link BrocaIndexFragment.OnFragmentInteractionListener} interface
+ * {@link BodyMaskIndexFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  */
-public class BrocaIndexFragment extends Fragment {
+public class BodyMaskIndexFragment extends Fragment {
+
     private OnFragmentInteractionListener mListener;
 
-    public BrocaIndexFragment() {
+    public BodyMaskIndexFragment() {
         // Required empty public constructor
     }
 
@@ -34,25 +36,27 @@ public class BrocaIndexFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_broca_index, container, false);
-        final RadioGroup genderGroup = view.findViewById(R.id.radioGroup);
-        final EditText heightText  = view.findViewById(R.id.input_height);
+        // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_body_mask_index, container, false);
+        final EditText heighText = view.findViewById(R.id.editText_height_bmi);
+        final EditText weightText = view.findViewById(R.id.editText_weight_bmi);
 
-        Button calculateButton = view.findViewById(R.id.button_calculate);
+        Button calculateButton = view.findViewById(R.id.button_submit_bmi);
         calculateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    String heightString = heightText.getText().toString();
-                    int checkedId = genderGroup.getCheckedRadioButtonId();
-                    if ((checkedId != -1) && !TextUtils.isEmpty(heightString)) {
-                        int height = Integer.parseInt(heightString);
-                        int gender = (checkedId == R.id.radio_male) ? BrocaIndex.MALE : BrocaIndex.FEMALE;
-                        BrocaIndex brocaIndex = new BrocaIndex(gender, height);
-                        mListener.onCalculateBrocaIndexClicked(brocaIndex.getIndex());
-                    } else {
-                        Toast.makeText(getActivity(), "Please select gender and input your height", Toast.LENGTH_SHORT).show();
-                    }
+                    String heightString = heighText.getText().toString();
+                    String weightString = weightText.getText().toString();
+
+                    float height = Integer.parseInt(heightString);
+                    float weight = Integer.parseInt(weightString);
+
+
+                    BodyMaskIndex bodymaskIndex = new BodyMaskIndex(weight, height);
+                    mListener.onCalculateBodyMaskClicked(bodymaskIndex.getIndex());
+                } else {
+                    Toast.makeText(getActivity(), "Please input correctly", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -60,6 +64,7 @@ public class BrocaIndexFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
+
 
     @Override
     public void onAttach(Context context) {
@@ -90,6 +95,6 @@ public class BrocaIndexFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        void onCalculateBrocaIndexClicked(float index);
+        void onCalculateBodyMaskClicked(float index);
     }
 }
